@@ -118,9 +118,60 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="lib\DS3232_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\DS3232_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\DS3232_Settings_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\HCSR04_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\HCSR04_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\i2c_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\i2c_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\IO_Macros.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\liquid_crystal_i2c_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\liquid_crystal_i2c_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\Serial_conf_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\Serial_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\Serial_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\TWI_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\TWI_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\TWI_Settings_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
