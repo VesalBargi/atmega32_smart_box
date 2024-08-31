@@ -41,6 +41,7 @@
 #define CCW 0
 
 const char *cmd_set_time = "set time";
+const char *cmd_set_alarm = "set alarm";
 const char *cmd_help = "help";
 
 char cmd_key[20];
@@ -54,6 +55,7 @@ volatile bool two_second = false;
 volatile bool three_second = false;
 volatile bool ten_second = false;
 volatile bool set_time = false;
+volatile bool set_alarm = false;
 volatile bool help = false;
 volatile bool buzzer = false;
 volatile bool box = false;
@@ -324,12 +326,24 @@ void command_set_time(void)
 	serial_send_string("\rDone!\r");
 }
 
+void command_set_alarm(void)
+{
+    int hour, minute, second;
+
+    // set input time as alarm
+    sscanf(cmd_first_value, "%d:%d:%d", &hour, &minute, &second);
+    RTC_AlarmSet(Alarm1_Match_Hours, 0, hour, minute, second);
+    serial_send_string("\rDone!\r");
+}
+
 void command_help(void)
 {
 	// print help menu
 	serial_send_string("\r******  << Help >>  ******\r");
-	serial_send_string("\r   set time XX:YY:ZZ M/D/Y\r");
+	serial_send_string("\r   set time HH:MM:SS MM/DD/YY\r");
 	serial_send_string("-> Sets the desired time\r");
+	serial_send_string("\r   set alarm HH:MM:SS\r");
+	serial_send_string("-> Sets the desired alarm\r");
 }
 
 void open_box(void)
@@ -396,6 +410,10 @@ void get_cmd(char c)
 		if (strcmp(cmd_key, cmd_set_time) == 0)
 		{
 			set_time = true;
+		}
+		else if (strcmp(cmd_key, cmd_set_alarm) == 0)
+		{
+    		set_alarm = true;
 		}
 		else if (strcmp(command, cmd_help) == 0)
 		{
@@ -487,6 +505,12 @@ int main(void)
 		{
 			command_set_time();
 			set_time = false;
+		}
+
+		if (set_alarm)
+		{
+			command_set_alarm();
+			set_alarm = false;
 		}
 
 		if (help)
