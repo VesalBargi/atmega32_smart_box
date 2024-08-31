@@ -56,12 +56,12 @@ volatile bool ten_second = false;
 volatile bool set_time = false;
 volatile bool help = false;
 volatile bool buzzer = false;
-volatile bool trash = false;
+volatile bool box = false;
 volatile bool is_open = false;
 volatile bool is_press = false;
 volatile bool manual = false;
 
-uint8_t counter_trash = 0;
+uint8_t counter_box = 0;
 uint8_t counter_time = 0;
 uint16_t counter_buzzer = 0;
 uint8_t counter_ultrasonic = 0;
@@ -137,14 +137,14 @@ void rtc_init(void)
 	// I2C -> init (400 kHz)
 	i2c_master_init(I2C_SCL_FREQUENCY_400);
 
-	// date time -> init (18:59:55 2023/12/31)
+	// date time -> init (23:59:55 2024/12/31)
 	t.Second = 55;
 	t.Minute = 59;
-	t.Hour = 18;
+	t.Hour = 23;
 	t.Day = Sunday;
 	t.Date = 31;
 	t.Month = 12;
-	t.Year = 2023;
+	t.Year = 2024;
 	RTC_Set(t);
 }
 
@@ -174,8 +174,8 @@ void alarm_init(void)
 {
 	// buzzer -> output
 	SBIT(BUZZER_DDR, BUZZER_PIN);
-	// alarm -> 19:00:00
-	RTC_AlarmSet(Alarm1_Match_Hours, 0, 19, 0, 0);
+	// alarm -> 00:00:00
+	RTC_AlarmSet(Alarm1_Match_Hours, 0, 0, 0, 0);
 	// alarm -> interrupt enable
 	RTC_AlarmInterrupt(Alarm_1, 1);
 }
@@ -289,10 +289,10 @@ void distance_check(void)
 	// SR04 -> get distance
 	distance = ultrasonic_triger();
 
-	// open trash bin if distance is 20 cm or less
+	// open box lid if distance is 20 cm or less
 	if (distance <= 20 && distance > 0)
 	{
-		trash = true;
+		box = true;
 	}
 }
 
@@ -332,9 +332,9 @@ void command_help(void)
 	serial_send_string("-> Sets the desired time\r");
 }
 
-void open_trash(void)
+void open_box(void)
 {
-	// open trash bin if it's not already
+	// open box lid if it's not already
 	if (!is_open)
 	{
 		rotate_stepper(4, CW);
@@ -342,9 +342,9 @@ void open_trash(void)
 	}
 }
 
-void close_trash(void)
+void close_box(void)
 {
-	// close trash bin if it's not already
+	// close box lid if it's not already
 	if (is_open)
 	{
 		rotate_stepper(4, CCW);
@@ -354,16 +354,16 @@ void close_trash(void)
 
 void button_pressed(void)
 {
-	// open trash bin - manual mode -> ON
+	// open box lid - manual mode -> ON
 	if (!is_open)
 	{
 		manual = true;
-		open_trash();
+		open_box();
 	}
-	// close trash bin - manual mode -> OFF
+	// close box lid - manual mode -> OFF
 	else
 	{
-		close_trash();
+		close_box();
 		manual = false;
 	}
 }
@@ -454,20 +454,20 @@ int main(void)
 		{
 			if (!manual)
 			{
-				close_trash();
+				close_box();
 			}
-			counter_trash = 0;
+			counter_box = 0;
 			ten_second = false;
 		}
 
-		if (trash)
+		if (box)
 		{
 			if (!manual)
 			{
-				open_trash();
+				open_box();
 			}
-			counter_trash = 0;
-			trash = false;
+			counter_box = 0;
+			box = false;
 		}
 
 		if (buzzer)
@@ -534,14 +534,14 @@ ISR(TIMER1_OVF_vect)
 	TIFR = (1 << TOV1);
 
 	counter_buzzer++;
-	counter_trash++;
+	counter_box++;
 
 	if (counter_buzzer == 3)
 	{
 		three_second = true;
 	}
 
-	if (counter_trash == 10)
+	if (counter_box == 10)
 	{
 		ten_second = true;
 	}
